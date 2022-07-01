@@ -2,12 +2,12 @@
 sudo apt update &> /dev/null
 apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y --no-install-recommends tzdata git ca-certificates curl build-essential libssl-dev pkg-config libclang-dev cmake &> /dev/null
 
-echo "Установка RUST" && sleep 1
+echo "\e[1m\e[32mУстановка RUST" && sleep 1
 
 sudo curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 source $HOME/.cargo/env
 
-echo "Установка ноды" && sleep 1
+echo "\e[1m\e[32mУстановка ноды" && sleep 1
 
 cd $HOME
 rm -rf /var/sui/db /var/sui/genesis.blob
@@ -17,7 +17,7 @@ mkdir -p /var/sui/db
 git clone https://github.com/MystenLabs/sui.git
 cd sui
 
-echo "Еще немного настроить осталось" && sleep 1
+echo "\e[1m\e[32mЕще немного настроить осталось" && sleep 1
 
 git remote add upstream https://github.com/MystenLabs/sui
 git fetch upstream
@@ -27,11 +27,11 @@ wget -P /var/sui https://github.com/MystenLabs/sui-genesis/raw/main/devnet/genes
 cargo build -p sui-node --release
 mv $HOME/sui/target/release/sui-node /usr/local/bin/
 
-echo "И сервисники создать" && sleep 1
+echo "\e[1m\e[32mИ сервисники создать" && sleep 1
 
 sed -i.bak "s/db-path:.*/db-path: \"\/var\/sui\/db\"/ ; s/genesis-file-location:.*/genesis-file-location: \"\/var\/sui\/genesis.blob\"/" /var/sui/fullnode.yaml
 while true; do
-    read -p "Открыть публичный доступ к API и метрикам ноды? [Y/n] " rmv
+    read -p "Открыть публичный доступ к API и метрикам ноды? [y/n] (только маленьки буквы)" rmv
     rmv=${rmv,,}                                 
     case $rmv in
         [y]* )
@@ -56,13 +56,14 @@ RestartSec=120
 WantedBy=multi-user.target
 " > /etc/systemd/system/sui-node.service
 
-# Starting services
+. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/ports_opening.sh) \ 9184 9000 8080
+
 sudo systemctl restart systemd-journald
 sudo systemctl daemon-reload
 sudo systemctl enable sui-node.service
 sudo systemctl restart sui-node.service
 
-echo "Установлено, запущено, работает." && sleep 1
+echo "\e[1m\e[32mУстановлено, запущено, работает." && sleep 1
 
 echo -e "\e[1m\e[32mОстановить ноду: \e[0m" 
 echo -e "\e[1m\e[39m    systemctl stop sui-node \n \e[0m" 
