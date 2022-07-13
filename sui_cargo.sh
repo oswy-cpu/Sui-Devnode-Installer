@@ -1,6 +1,5 @@
-#!/bin/bash
+#!/sui
 
-cd sui
 git remote add upstream https://github.com/MystenLabs/sui
 git fetch upstream
 git checkout --track upstream/devnet
