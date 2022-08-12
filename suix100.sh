@@ -29,7 +29,7 @@ git fetch upstream
 git checkout -B devnet --track upstream/devnet
 cp crates/sui-config/data/fullnode-template.yaml /var/sui/fullnode.yaml
 wget -P /var/sui https://github.com/MystenLabs/sui-genesis/raw/main/devnet/genesis.blob
-cargo build -p sui-node --release
+cargo run --release --bin sui-node -- --config-path fullnode.yaml
 mv $HOME/sui/target/release/sui-node /usr/local/bin/
 
 echo "=================================================="
